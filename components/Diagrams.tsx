@@ -8,6 +8,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, ArrowRight, Shield, Scale, Settings, Target, BarChart3, Users, Layout, Sprout, Beef, X, CheckCircle2, TrendingUp } from 'lucide-react';
 
+// Fix: Using any to bypass motion type issues in the current environment
+const MotionDiv = motion.div as any;
+
 // --- STRATEGIC MAP DIAGRAM ---
 export const StrategicMapDiagram: React.FC = () => {
   return (
@@ -190,7 +193,8 @@ export const ServiceGrid: React.FC = () => {
     <div className="relative">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {services.map((s, i) => (
-          <motion.div 
+          /* Fix: Using MotionDiv alias */
+          <MotionDiv 
             key={i}
             whileHover={{ y: -5 }}
             onClick={() => setSelectedService(i)}
@@ -204,7 +208,7 @@ export const ServiceGrid: React.FC = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ihara-red flex items-center gap-1 group-hover:gap-2 transition-all">
               Leer Más <ArrowRight size={10} />
             </span>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
 
@@ -212,7 +216,8 @@ export const ServiceGrid: React.FC = () => {
         {selectedService !== null && (
           <>
             {/* Background Overlay with Sophisticated Blur */}
-            <motion.div 
+            {/* Fix: Using MotionDiv alias */}
+            <MotionDiv 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -222,7 +227,8 @@ export const ServiceGrid: React.FC = () => {
 
             {/* Modal Container: Flexbox Centering Strategy */}
             <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 md:p-8 pointer-events-none">
-              <motion.div 
+              {/* Fix: Using MotionDiv alias */}
+              <MotionDiv 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -293,7 +299,7 @@ export const ServiceGrid: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </MotionDiv>
             </div>
           </>
         )}

@@ -14,6 +14,9 @@ const Group = 'group' as any;
 const AmbientLight = 'ambientLight' as any;
 const PointLight = 'pointLight' as any;
 const Mesh = 'mesh' as any;
+// Fix: Adding material aliases to fix type errors
+const MeshStandardMaterial = 'meshStandardMaterial' as any;
+const MeshBasicMaterial = 'meshBasicMaterial' as any;
 
 /**
  * Campo de partículas sutil para profundidad
@@ -78,7 +81,8 @@ const SacredPulsingGeometry = () => {
     <Group ref={groupRef}>
       {/* Núcleo Central */}
       <Icosahedron ref={coreRef} args={[0.8, 1]}>
-        <meshStandardMaterial 
+        {/* Fix: Using MeshStandardMaterial alias */}
+        <MeshStandardMaterial 
           color="#E61E43" 
           emissive="#E61E43" 
           emissiveIntensity={2} 
@@ -97,7 +101,8 @@ const SacredPulsingGeometry = () => {
             0
           ]}
         >
-          <meshStandardMaterial 
+          {/* Fix: Using MeshStandardMaterial alias */}
+          <MeshStandardMaterial 
             color="#E61E43" 
             emissive="#E61E43" 
             emissiveIntensity={1.5}
@@ -109,7 +114,8 @@ const SacredPulsingGeometry = () => {
 
       {/* Esfera de puntos exterior */}
       <Sphere args={[4, 32, 32]}>
-        <meshBasicMaterial 
+        {/* Fix: Using MeshBasicMaterial alias */}
+        <MeshBasicMaterial 
           color="#ffffff" 
           wireframe 
           transparent 

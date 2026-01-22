@@ -1,5 +1,7 @@
 {
   "name": "Ihara Outsourcing",
   "description": "Expertos en inversiones en Paraguay con 30 años de experiencia. Especialistas en Ley de Maquila, apertura de empresas (S.A. y EAS), asesoría legal y soluciones de infraestructura industrial y ganadera. ¡Tu desembarco seguro en el mercado paraguayo!",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }

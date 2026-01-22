@@ -4,174 +4,179 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
-import { MessageCircle, X, Send, User, Bot, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { GoogleGenAI, LiveServerMessage, Modality } from "@google/genai";
+import { MessageCircle, X, Send, Loader2, Mic, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const MotionDiv = motion.div as any;
 
 interface Message {
   role: 'user' | 'model';
   text: string;
 }
 
-const SYSTEM_INSTRUCTION = `Actúa como Olga Ihara, consultora senior con más de 30 años de trayectoria en la apertura y estructuración de empresas en Paraguay. Tu tono es ejecutivo, altamente profesional, confiable y acogedor. Eres una facilitadora de negocios que ofrece soluciones "llave en mano" (infraestructura + legalidad).
+const SYSTEM_INSTRUCTION = `Actúa como Olga Ihara, consultora senior en Paraguay. Tu tono es ejecutivo y acogedor. Ofreces soluciones llave en mano. 
+Si el usuario habla por voz, sé breve y directa, como en una llamada de negocios real. No des rodeos.`;
 
-Base de Conocimientos (Ihara Outsourcing):
- * Misión: Estructuración estratégica, administrativa y mediaciones legislativas para operar con rapidez y seguridad jurídica.
- * Servicios de Consultoría y Apertura (Costos Estimados USD):
-   * Constitución Legal (S.A. o S.A.S.): $1.500 - $2.500.
-   * Registros Auxiliares y rúbricas: $500 - $800.
-   * Proyecto de Maquila ante el CNIME: $2.000 - $4.000.
-   * Registro de Importador/Exportador (VUE): $400 - $600.
-   * Total para operar: Entre $4.400 y $7.900.
- * Infraestructura Industrial (Alto Paraná - CDE): Galpones industriales para alquiler y leasing, listos para Maquila.
- * Agronegocios y Ganadería: Tierras fértiles en Alto Paraná y propiedades listas en el Chaco (engorde de hasta 1.000 cabezas).
- * Beneficios Ley de Maquila: Tributo único del 1%, suspensión de aranceles, recuperación de IVA y energía barata ($0.04 - $0.06 kWh).
+function encodeAudio(bytes: Uint8Array) {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
 
-Reglas de Comportamiento:
- * Identidad: Preséntate siempre como Olga Ihara. 30 años de experiencia avalan tu seguridad para el inversor.
- * Idioma: Detecta el idioma del cliente automáticamente. Responde en Portugués (Brasil) a brasileños y en Inglés a otros extranjeros. De lo contrario, usa Español.
- * Estrategia de Venta: Si preguntan por Maquila, menciona galpones en CDE. Si buscan diversificar, destaca ganadería en el Chaco o agricultura en Alto Paraná.
+function decodeAudio(base64: string) {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+  return bytes;
+}
 
-Servicios legales y Estrategia para Objeciones de Costo (Opción EAS):
-Si el cliente manifiesta que una S.A. es costosa o lenta, ofrece la EAS (Empresa por Acciones Simplificadas):
- * Ventaja Económica: Costo estatal 0 Gs (Gobierno eliminó tasas judiciales).
- * Capital Flexible: Sin capital mínimo obligatorio.
- * Presupuesto "Llave en Mano": Honorarios de Ihara USD 600 - USD 1.500.
- * Solución para Extranjeros: Ihara provee Representación Legal temporal si no tienen cédula paraguaya.
-
-Frase Clave de Olga: "Si busca agilidad, la EAS es ideal. El trámite estatal es gratuito; usted solo invierte en nuestra gestión profesional para asegurar que todo sea correcto y en nuestro servicio de representación legal si aún no cuenta con cédula paraguaya. Por unos USD 1.000, tendrá su empresa lista para operar."`;
+async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: number, numChannels: number): Promise<AudioBuffer> {
+  const dataInt16 = new Int16Array(data.buffer);
+  const frameCount = dataInt16.length / numChannels;
+  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
+  for (let channel = 0; channel < numChannels; channel++) {
+    const channelData = buffer.getChannelData(channel);
+    for (let i = 0; i < frameCount; i++) channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
+  }
+  return buffer;
+}
 
 export const OlgaChat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLive, setIsLive] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'Bienvenido a Ihara Outsourcing. Soy Olga Ihara, consultora senior con 30 años de trayectoria. ¿Desea conocer los beneficios estratégicos de la Ley de Maquila, la apertura ágil de empresas vía EAS o nuestras opciones de infraestructura industrial en Alto Paraná?' }
+    { role: 'model', text: 'Soy Olga Ihara. ¿Desea que hablemos sobre su próxima inversión en Paraguay? Use el micrófono para hablar en vivo conmigo.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  const audioContextStack = useRef<{ input?: AudioContext; output?: AudioContext }>({});
+  const liveSessionRef = useRef<any>(null);
+  const nextStartTimeRef = useRef(0);
+  const audioSourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const stopLiveSession = useCallback(() => {
+    if (liveSessionRef.current) {
+      liveSessionRef.current.then((session: any) => session.close());
+      liveSessionRef.current = null;
+    }
+    audioSourcesRef.current.forEach(s => s.stop());
+    audioSourcesRef.current.clear();
+    setIsLive(false);
+  }, []);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+  const startLiveSession = async () => {
     setIsLoading(true);
-
+    setIsLive(true);
     try {
-      // Use gemini-3-pro-preview for complex consulting reasoning
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
-        contents: [
-            ...messages.map(m => ({
-                role: m.role,
-                parts: [{ text: m.text }]
-            })),
-            { role: 'user', parts: [{ text: userMessage }] }
-        ],
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      if (!audioContextStack.current.input) {
+        audioContextStack.current.input = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
+        audioContextStack.current.output = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const sessionPromise = ai.live.connect({
+        model: 'gemini-2.5-flash-native-audio-preview-12-2025',
         config: {
-          systemInstruction: SYSTEM_INSTRUCTION
+          responseModalities: [Modality.AUDIO],
+          systemInstruction: SYSTEM_INSTRUCTION,
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } }
+        },
+        callbacks: {
+          onopen: () => {
+            const source = audioContextStack.current.input!.createMediaStreamSource(stream);
+            const scriptProcessor = audioContextStack.current.input!.createScriptProcessor(4096, 1, 1);
+            scriptProcessor.onaudioprocess = (e) => {
+              const inputData = e.inputBuffer.getChannelData(0);
+              const int16 = new Int16Array(inputData.length);
+              for (let i = 0; i < inputData.length; i++) int16[i] = inputData[i] * 32768;
+              const b64 = encodeAudio(new Uint8Array(int16.buffer));
+              sessionPromise.then(session => session.sendRealtimeInput({ media: { data: b64, mimeType: 'audio/pcm;rate=16000' } }));
+            };
+            source.connect(scriptProcessor);
+            scriptProcessor.connect(audioContextStack.current.input!.destination);
+            setIsLoading(false);
+          },
+          onmessage: async (msg: LiveServerMessage) => {
+            const audioData = msg.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
+            if (audioData) {
+              const ctx = audioContextStack.current.output!;
+              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
+              const buffer = await decodeAudioData(decodeAudio(audioData), ctx, 24000, 1);
+              const source = ctx.createBufferSource();
+              source.buffer = buffer;
+              source.connect(ctx.destination);
+              source.start(nextStartTimeRef.current);
+              nextStartTimeRef.current += buffer.duration;
+              audioSourcesRef.current.add(source);
+              source.onended = () => audioSourcesRef.current.delete(source);
+            }
+          },
+          onclose: () => setIsLive(false),
+          onerror: () => stopLiveSession()
         }
       });
-      
-      const modelText = response.text || "Disculpe, he tenido un problema técnico. ¿Podría repetirme su consulta?";
-      setMessages(prev => [...prev, { role: 'model', text: modelText }]);
-    } catch (error) {
-      console.error("Chat Error:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "Lo lamento, mis sistemas de consulta están temporalmente fuera de línea. Puede contactarnos directamente a info@ihara.com.py." }]);
-    } finally {
+      liveSessionRef.current = sessionPromise;
+    } catch (err) {
+      setIsLive(false);
       setIsLoading(false);
     }
   };
 
+  const handleTextSend = async () => {
+    if (!input.trim() || isLoading) return;
+    const text = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text }]);
+    setIsLoading(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-pro-preview',
+        contents: [{ role: 'user', parts: [{ text }] }],
+        config: { systemInstruction: SYSTEM_INSTRUCTION }
+      });
+      setMessages(prev => [...prev, { role: 'model', text: response.text || "Disculpe, hubo un error." }]);
+    } catch (e) { console.error(e); } finally { setIsLoading(false); }
+  };
+
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
   return (
     <div className="chat-widget">
-      {/* Floating Button */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-ihara-red text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-[100] group"
-      >
+      <button onClick={() => setIsOpen(!isOpen)} className="fixed bottom-6 right-6 w-16 h-16 bg-ihara-red text-white rounded-full shadow-2xl flex items-center justify-center z-[100]">
         {isOpen ? <X size={28} /> : <MessageCircle size={28} />}
-        {!isOpen && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-ihara-red text-[10px] font-black border-2 border-ihara-red rounded-full flex items-center justify-center">AI</span>
-        )}
       </button>
-
-      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-24 right-6 w-[350px] md:w-[400px] h-[550px] bg-white rounded-2xl shadow-2xl z-[100] flex flex-col overflow-hidden border border-stone-200"
-          >
-            {/* Header */}
-            <div className="bg-ihara-dark p-6 flex items-center justify-between border-b-4 border-ihara-red">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-ihara-red rounded-full flex items-center justify-center text-white font-black text-xl">O</div>
-                <div>
-                  <h4 className="text-white font-bold text-sm">OLGA IHARA</h4>
-                  <p className="text-[10px] text-ihara-red uppercase tracking-widest font-black">Senior Strategy Consultant</p>
-                </div>
-              </div>
-              <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white">
-                <X size={20} />
-              </button>
+          <MotionDiv initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed bottom-24 right-6 w-[350px] md:w-[400px] h-[580px] bg-white rounded-2xl shadow-2xl z-[100] flex flex-col overflow-hidden border border-stone-200">
+            <div className="bg-ihara-dark p-6 flex items-center justify-between border-b-4 border-ihara-red text-white">
+              <div><h4 className="font-bold text-sm">OLGA IHARA</h4><p className="text-[10px] text-ihara-red uppercase font-black">{isLive ? 'Voz en Vivo' : 'Consultora Senior'}</p></div>
+              <button onClick={() => { stopLiveSession(); setIsOpen(false); }}><X size={20} /></button>
             </div>
-
-            {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-ihara-light/50">
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`p-4 rounded-xl text-xs font-medium leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-ihara-dark text-white rounded-tr-none' : 'bg-white border border-stone-200 text-ihara-gray rounded-tl-none'}`}>
-                    {msg.text}
-                  </div>
+              {isLive ? (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                  <div className="relative mb-8"><div className="absolute inset-0 bg-ihara-red/20 rounded-full animate-ping scale-150"></div><div className="relative w-24 h-24 bg-ihara-red rounded-full flex items-center justify-center text-white"><Mic size={40} /></div></div>
+                  <h3 className="text-ihara-dark font-black uppercase text-sm">Olga escuchando...</h3>
                 </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                   <div className="p-4 bg-white border border-stone-200 rounded-xl rounded-tl-none flex items-center gap-2">
-                      <Loader2 size={12} className="animate-spin text-ihara-red" />
-                      <span className="text-[10px] font-bold text-ihara-red uppercase">Procesando...</span>
-                   </div>
-                </div>
+              ) : (
+                <>{messages.map((msg, i) => (<div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-4 rounded-xl text-xs font-medium shadow-sm ${msg.role === 'user' ? 'bg-ihara-dark text-white' : 'bg-white text-ihara-gray'}`}>{msg.text}</div></div>))}{isLoading && <Loader2 className="animate-spin text-ihara-red mx-auto" />}</>
               )}
               <div ref={messagesEndRef} />
             </div>
-
-            {/* Input Area */}
-            <div className="p-4 bg-white border-t border-stone-100">
+            <div className="p-4 bg-white border-t border-stone-100 flex flex-col gap-3">
               <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="Maquila, apertura EAS, representación legal..."
-                  className="flex-1 p-4 bg-ihara-light rounded-lg border border-stone-200 outline-none text-xs font-bold focus:border-ihara-red transition-all"
-                />
-                <button 
-                  onClick={handleSend}
-                  disabled={isLoading || !input.trim()}
-                  className="p-4 bg-ihara-red text-white rounded-lg hover:bg-ihara-dark disabled:bg-stone-300 transition-all"
-                >
-                  <Send size={18} />
-                </button>
+                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleTextSend()} placeholder="Escriba aquí..." disabled={isLive} className="flex-1 p-3 bg-ihara-light rounded-lg border border-stone-200 text-xs outline-none" />
+                <button onClick={handleTextSend} disabled={isLive || !input.trim()} className="p-3 bg-ihara-dark text-white rounded-lg"><Send size={18} /></button>
               </div>
+              <button onClick={isLive ? stopLiveSession : startLiveSession} className={`w-full py-3 rounded-lg flex items-center justify-center gap-3 font-black uppercase text-[10px] transition-all ${isLive ? 'bg-ihara-red text-white' : 'bg-stone-100 text-ihara-gray'}`}>{isLive ? <><MicOff size={14} /> Colgar</> : <><Mic size={14} /> Hablar con Olga</>}</button>
             </div>
-          </motion.div>
+          </MotionDiv>
         )}
       </AnimatePresence>
     </div>
