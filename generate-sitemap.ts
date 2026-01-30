@@ -1,10 +1,7 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-
-declare var Deno: any;
 
 const baseUrl = "https://www.iharaoutsourcing.com";
 const lastMod = new Date().toISOString().split('T')[0];
@@ -42,11 +39,13 @@ const generateSitemap = () => {
 async function generate() {
   try {
     const sitemap = generateSitemap();
+    // @ts-ignore
     try { await Deno.mkdir("compiled", { recursive: true }); } catch (e) {}
+    // @ts-ignore
     await Deno.writeTextFile("compiled/sitemap.xml", sitemap);
-    console.log("✅ Sitemap generado en /compiled/sitemap.xml");
+    console.log("✅ Sitemap generado correctamente.");
   } catch (error) {
-    console.error("❌ Error generando sitemap:", error);
+    console.error("❌ Error SEO:", error);
   }
 }
 
