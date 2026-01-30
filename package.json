@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Ihara Outsourcing Corporate Website",
   "scripts": {
-    "build": "mkdir -p compiled && deno run -A https://deno.land/x/esbuild_bundle@0.4.0/mod.ts index.tsx --output=compiled/index.js --import-map=deno.json && cp index.html compiled/ && cp index.css compiled/ && (cp robots.txt compiled/ || true) && sed -i 's|/index.tsx|/index.js|g' compiled/index.html && deno run -A generate-sitemap.ts && for lang in en pt jp de zh ar; do mkdir -p compiled/$lang && cp compiled/index.html compiled/$lang/; done && cp compiled/index.html compiled/404.html",
+    "build": "deno run -A build.ts && cp index.html compiled/ && cp index.css compiled/ && (cp robots.txt compiled/ || true) && sed -i 's|/index.tsx|/index.js|g' compiled/index.html && deno run -A generate-sitemap.ts && for lang in en pt jp de zh ar; do mkdir -p compiled/$lang && cp compiled/index.html compiled/$lang/; done && cp compiled/index.html compiled/404.html",
     "start": "deno run -A server.ts"
   },
   "author": "Ihara Group",
