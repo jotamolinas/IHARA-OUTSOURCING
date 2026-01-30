@@ -1,19 +1,24 @@
 
-
 /**
- * Ihara Outsourcing - Custom Build Script
- * Uses esbuild + deno loader for stable bundling
+ * Ihara Outsourcing - Universal Build Script (WASM)
+ * Solves "Exec format error" in CI/CD environments
  */
 
-import * as esbuild from "https://deno.land/x/esbuild@v0.20.2/mod.js";
+import * as esbuild from "https://deno.land/x/esbuild@v0.20.2/wasm.js";
 import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.11.0";
 
 async function build() {
-  console.log("🚀 Iniciando construcción de Ihara Outsourcing...");
+  console.log("🚀 Iniciando construcción universal (WASM)...");
   
   try {
+    // Inicializar esbuild WASM
+    await esbuild.initialize({
+      wasmURL: "https://deno.land/x/esbuild@v0.20.2/esbuild.wasm",
+      worker: false,
+    });
+
     // Asegurar que la carpeta compiled existe
-    // @ts-ignore: Deno global is available in Deno runtime
+    // @ts-ignore
     try { await Deno.mkdir("compiled", { recursive: true }); } catch {}
 
     await esbuild.build({
@@ -29,17 +34,17 @@ async function build() {
       jsxImportSource: "react",
     });
 
-    console.log("✅ Bundle generado en compiled/index.js");
+    console.log("✅ Proyecto empaquetado con éxito.");
   } catch (e) {
-    console.error("❌ Error durante el bundling:", e);
-    // @ts-ignore: Deno global is available in Deno runtime
+    console.error("❌ Error crítico en el build:", e);
+    // @ts-ignore
     Deno.exit(1);
   } finally {
     esbuild.stop();
   }
 }
 
-// @ts-ignore: import.meta.main is a Deno extension
+// @ts-ignore
 if (import.meta.main) {
   build();
 }
