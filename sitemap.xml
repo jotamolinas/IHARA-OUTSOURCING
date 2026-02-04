@@ -1,18 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.iharaoutsourcing.com/</loc>
-    <lastmod>2024-05-22</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.iharaoutsourcing.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.iharaoutsourcing.com/en/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.iharaoutsourcing.com/pt/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.iharaoutsourcing.com/jp/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.iharaoutsourcing.com/de/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.iharaoutsourcing.com/zh/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.iharaoutsourcing.com/ar/" />
   </url>
   <url>
     <loc>https://www.iharaoutsourcing.com/services</loc>
-    <lastmod>2024-05-22</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.iharaoutsourcing.com/services" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.iharaoutsourcing.com/en/services" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.iharaoutsourcing.com/pt/services" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.iharaoutsourcing.com/jp/services" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.iharaoutsourcing.com/de/services" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.iharaoutsourcing.com/zh/services" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.iharaoutsourcing.com/ar/services" />
   </url>
   <url>
-    <loc>https://www.iharaoutsourcing.com/contact</loc>
-    <lastmod>2024-05-22</lastmod>
+    <loc>https://www.iharaoutsourcing.com/insights</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.iharaoutsourcing.com/insights" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.iharaoutsourcing.com/en/insights" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.iharaoutsourcing.com/pt/insights" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.iharaoutsourcing.com/jp/insights" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.iharaoutsourcing.com/de/insights" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.iharaoutsourcing.com/zh/insights" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.iharaoutsourcing.com/ar/insights" />
   </url>
 </urlset>
