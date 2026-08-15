@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ihara Outsourcing | Constitución de Sociedades y Legal-Tech en Paraguay</title>
+    <meta name="description" content="Acelere su inversión en Paraguay mediante tecnología legal-tech. Expertos en estructuración corporativa, apertura de sucursales y ventajas fiscales del Mercosur." />
+    <!-- Meta robots for indexing -->
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Fallback canonical -->
+    <link rel="canonical" href="https://www.iharaoutsourcing.com/" />
+    
+    <!-- SEO IDENTITY SCRIPT (Defensive Canonical Handling) -->
+    <script>
+      (function() {
+        const domain = "www.iharaoutsourcing.com";
+        const protocol = "https://";
+        const currentPath = window.location.pathname;
+        const fullHttpsUrl = protocol + domain + (currentPath.startsWith('/') ? currentPath : '/' + currentPath);
+        
+        // Update Canonical tag for Google Search Console
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+          canonical = document.createElement('link');
+          canonical.rel = 'canonical';
+          document.head.appendChild(canonical);
+        }
+        canonical.href = fullHttpsUrl;
+
+        // Redirect only in real production environment and if using insecure protocol
+        // Disabled JS redirect to favor Server-side 301 for reliability
+        console.log("SEO Engine Initialized: " + fullHttpsUrl);
+      })();
+    </script>
+    
+    <!-- Social Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.iharaoutsourcing.com/" />
+    <meta property="og:title" content="Ihara Outsourcing | Estructuración Jurídica para Inversores en Paraguay" />
+    <meta property="og:description" content="Asesoría corporativa integral para empresas extranjeras. Simplificamos la burocracia con soluciones legal-tech y agilidad operativa en Paraguay." />
+    <meta property="og:image" content="https://www.iharaoutsourcing.com/og-image.webp" />
+
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <link rel="preconnect" href="https://esm.sh" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Internationalization Hreflang Tags -->
+    <link rel="alternate" hreflang="es" href="https://www.iharaoutsourcing.com/" />
+    <link rel="alternate" hreflang="en" href="https://www.iharaoutsourcing.com/en/" />
+    <link rel="alternate" hreflang="pt" href="https://www.iharaoutsourcing.com/pt/" />
+    <link rel="alternate" hreflang="ja" href="https://www.iharaoutsourcing.com/jp/" />
+    <link rel="alternate" hreflang="de" href="https://www.iharaoutsourcing.com/de/" />
+    <link rel="alternate" hreflang="zh" href="https://www.iharaoutsourcing.com/zh/" />
+    <link rel="alternate" hreflang="ar" href="https://www.iharaoutsourcing.com/ar/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.iharaoutsourcing.com/" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/index.css" />
+
+    <script>
+      window.process = { env: { API_KEY: "" } };
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ihara: { red: '#E61E43', dark: '#1A1A1A', gray: '#4A4A4A', light: '#F5F5F5' }
+            }
+          }
+        }
+      }
+    </script>
+
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "three": "https://esm.sh/three@0.181.1",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@9.0.0?external=react,react-dom,three",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@10.0.0?external=react,react-dom,three,@react-three/fiber",
+    "framer-motion": "https://esm.sh/framer-motion@11.11.17?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.468.0?external=react",
+    "recharts": "https://esm.sh/recharts@2.12.7?external=react,react-dom",
+    "react-dom/": "https://esm.sh/react-dom@19.0.0/",
+    "react/": "https://esm.sh/react@19.0.0/"
+  }
+}
+</script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.js"></script>
+  </body>
+</html>

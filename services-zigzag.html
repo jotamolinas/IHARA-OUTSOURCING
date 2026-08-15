@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ihara Outsourcing - Servicios</title>
+    <style>
+        /* 
+         * CSS PURO - IHARA OUTSOURCING 
+         * Estructura B2B Corporativa, Ligera y Optimizada
+         */
+
+        /* Variables de color corporativo */
+        :root {
+            --ihara-dark: #121212;
+            --ihara-red: #D32F2F;
+            --ihara-red-hover: #b71c1c;
+            --bg-light: #ffffff;
+            --bg-alt: #f8f9fa;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Resets básicos B2B */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Contenedor Principal de la Sección */
+        .services-section {
+            padding: 80px 20px;
+            background-color: var(--bg-light);
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .services-header h2 {
+            font-size: 2.5rem;
+            color: var(--ihara-dark);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+        }
+
+        .services-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Bloque Individual - Zig-Zag */
+        .service-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 80px;
+            gap: 40px;
+        }
+
+        /* Fondos alternados para mejor separación */
+        .service-row:nth-child(even) {
+            background-color: var(--bg-alt);
+            padding: 40px;
+            border-radius: 12px;
+        }
+
+        .service-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Columnas de la fila */
+        .service-image-col, .service-text-col {
+            flex: 1; /* Mitad y mitad (50/50) */
+        }
+
+        /* Estilos de la imagen */
+        .service-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra corporativa sutil */
+        }
+
+        /* Estilos de texto corporativo */
+        .service-title {
+            font-size: 2rem;
+            color: var(--ihara-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .service-desc {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Botón CTA (Call to Action) */
+        .service-cta {
+            display: inline-block;
+            background-color: var(--ihara-dark);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .service-cta:hover {
+            background-color: var(--ihara-red);
+            transform: translateY(-2px);
+        }
+
+        /* Inversión manual de orden para el Zig-Zag en Desktop */
+        /* Fila 2 y 4: Texto a la izquierda, Imagen a la derecha */
+        .service-row.reverse .service-text-col {
+            order: 1;
+        }
+        .service-row.reverse .service-image-col {
+            order: 2;
+        }
+
+        /* 
+         * RESPONSIVE MOBILE (Max-width: 767px)
+         * Rompiendo el Zig-Zag y forzando el orden:
+         * 1. Imagen
+         * 2. Texto
+         * 3. Botón
+         */
+        @media (max-width: 767px) {
+            .service-row, .service-row.reverse {
+                flex-direction: column; /* Apila los elementos verticalmente */
+                gap: 20px;
+                padding: 0;
+            }
+
+            .service-row:nth-child(even) {
+                background-color: transparent; /* Removemos el fondo en mobile para un look más limpio */
+                padding: 0;
+            }
+
+            .service-image-col {
+                order: 1 !important; /* Fuerza siempre a la imagen arriba */
+                width: 100%;
+            }
+
+            .service-text-col {
+                order: 2 !important; /* Fuerza siempre al texto abajo */
+                width: 100%;
+                text-align: left;
+            }
+
+            .service-image {
+                height: 250px; /* Reducción de tamaño en mobile */
+            }
+
+            .service-title {
+                font-size: 1.5rem;
+            }
+
+            .service-cta {
+                width: 100%;
+                text-align: center; /* Botón a bloque completo en mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="services-section">
+        <div class="services-container">
+            
+            <header class="services-header">
+                <h2>Servicios Corporativos</h2>
+                <p>Estrategias avanzadas de externalización y desarrollo industrial con foco internacional.</p>
+            </header>
+
+            <!-- Bloque 1 (Normal: Img -> Txt) -->
+            <article class="service-row">
+                <div class="service-image-col">
+                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" alt="Agronegocios de Alto Rendimiento" class="service-image">
+                </div>
+                <div class="service-text-col">
+                    <h3 class="service-title">Agronegocios y Commodities de Alto Rendimiento</h3>
+                    <p class="service-desc">Potenciamos la cadena de valor mediante estrategias de inversión de alto impacto. Proveemos asesoramiento experto en gestión de commodities a escala global, maximizando el rendimiento sobre los activos agrícolas con estándares de calidad superior.</p>
+                    <a href="#" class="service-cta">Agendar Consultoría</a>
+                </div>
+            </article>
+
+            <!-- Bloque 2 (Reverse: Txt -> Img en Desktop) -->
+            <article class="service-row reverse">
+                <div class="service-text-col">
+                    <h3 class="service-title">Brokerage Cárnico y Cumplimiento Sanitario Internacional</h3>
+                    <p class="service-desc">Facilitamos la apertura y consolidación operativa en mercados internacionales exigentes. Aseguramos trazabilidad estricta y cumplimiento total con normativas FDA, OIE y directivas sanitarias de la Unión Europea y Asia.</p>
+                    <a href="#" class="service-cta">Solicitar Portafolio</a>
+                </div>
+                <div class="service-image-col">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80" alt="Brokerage Cárnico Corporativo" class="service-image">
+                </div>
+            </article>
+
+            <!-- Bloque 3 (Normal: Img -> Txt) -->
+            <article class="service-row">
+                <div class="service-image-col">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80" alt="Transferencia Tecnológica" class="service-image">
+                </div>
+                <div class="service-text-col">
+                    <h3 class="service-title">Transferencia Tecnológica e Ingeniería Aplicada</h3>
+                    <p class="service-desc">Aceleramos la modernización industrial a través de la integración de tecnología de punta. Optimizamos procesos productivos con metodologías orientadas a la eficiencia operativa, automatización y competitividad estructural.</p>
+                    <a href="#" class="service-cta">Contactar Especialista</a>
+                </div>
+            </article>
+
+            <!-- Bloque 4 (Reverse: Txt -> Img en Desktop) -->
+            <article class="service-row reverse">
+                <div class="service-text-col">
+                    <h3 class="service-title">Hub de Manufactura y Régimen de Maquila</h3>
+                    <p class="service-desc">Asesoramos en el establecimiento de operaciones bajo incentivos fiscales y arancelarios de alta competitividad. Gestionamos integralmente la habilitación operativa para convertir locaciones en centros neurálgicos de exportación global.</p>
+                    <a href="#" class="service-cta">Iniciar Radicación</a>
+                </div>
+                <div class="service-image-col">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Hub de Manufactura y Maquila" class="service-image">
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+</body>
+</html>

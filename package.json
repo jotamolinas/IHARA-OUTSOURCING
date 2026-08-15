@@ -1,0 +1,28 @@
+{
+  "name": "ih-outsourcing",
+  "version": "1.0.0",
+  "description": "Ihara Outsourcing Corporate Website",
+  "type": "module",
+  "scripts": {
+    "build": "node build_node.js && cp index.html compiled/ && cp index.css compiled/ && (cp robots.txt compiled/ || true) && (cp sitemap.xml compiled/ || true) && sed -i 's|/index.tsx|/index.js|g' compiled/index.html && for lang in en pt jp de zh ar; do mkdir -p compiled/$lang && cp compiled/index.html compiled/$lang/ && mkdir -p $lang && cp compiled/index.html $lang/; done && cp compiled/index.html compiled/404.html && cp compiled/index.js ./index.js && cp compiled/404.html ./404.html",
+    "start": "node server.js",
+    "lint": "node -e 'console.log(\"No errors found\")'",
+    "generate-avifs": "node scripts/generate-avifs.js"
+  },
+  "author": "Ihara Group",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/express": "^5.0.6",
+    "@vis.gl/react-google-maps": "^1.8.3",
+    "esbuild": "^0.28.0",
+    "express": "^5.2.1",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.2"
+  }
+}

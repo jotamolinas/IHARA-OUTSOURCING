@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.iharaoutsourcing.com/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.iharaoutsourcing.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.iharaoutsourcing.com/en/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.iharaoutsourcing.com/pt/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.iharaoutsourcing.com/jp/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.iharaoutsourcing.com/de/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.iharaoutsourcing.com/zh/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.iharaoutsourcing.com/ar/" />
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/en/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/pt/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/jp/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/de/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/zh/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/ar/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/services</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.iharaoutsourcing.com/market</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>
